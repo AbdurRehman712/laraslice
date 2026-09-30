@@ -1,0 +1,46 @@
+schema_version: 1
+name: Service Desk
+handle: service_desk
+description: Track support desks, customer requests, and ticket status.
+models:
+  - handle: service_desk
+    table: service_desks
+    root: true
+    fields:
+      - handle: name
+        label: Desk name
+        type: string
+        required: true
+      - handle: is_active
+        label: Active
+        type: boolean
+        default: true
+    relations:
+      - name: tickets
+        type: hasMany
+        model: ticket
+        foreign_key: service_desk_id
+  - handle: ticket
+    table: tickets
+    fields:
+      - handle: service_desk_id
+        label: Service desk
+        type: foreign_id
+        required: true
+      - handle: subject
+        label: Subject
+        type: string
+        required: true
+      - handle: status
+        label: Status
+        type: enum
+        default: open
+        options:
+          open: Open
+          in_progress: In progress
+          resolved: Resolved
+    relations:
+      - name: service_desk
+        type: belongsTo
+        model: service_desk
+        foreign_key: service_desk_id

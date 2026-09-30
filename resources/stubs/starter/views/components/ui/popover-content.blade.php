@@ -1,0 +1,40 @@
+@props([
+    'align' => 'center',
+    'side' => 'bottom',
+    'sideOffset' => 4,
+    'label' => null,
+])
+
+@php
+    $label ??= __('Popover');
+    $placement = $side.($align === 'center' ? '' : '-'.$align);
+    $anchorAttr = 'x-blat-anchor.'.$placement.'.offset.'.$sideOffset.'.no-size="$refs.trigger"';
+@endphp
+
+<template x-teleport="body" wire:ignore>
+    <div
+        x-blat-dialog-layer
+        x-show="open"
+        x-cloak
+        {!! $anchorAttr !!}
+        @click.outside="open = false"
+        @keydown.escape.window="open = false"
+        x-trap="open"
+        :id="$id('blat-popover')"
+        role="dialog"
+        aria-label="{{ $label }}"
+        tabindex="-1"
+        data-slot="popover-content"
+        data-side="{{ $side }}"
+        :data-state="open ? 'open' : 'closed'"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        {{ $attributes->twMerge('bg-popover text-popover-foreground fixed z-50 w-72 origin-top rounded-md border p-4 shadow-md outline-hidden') }}
+    >
+        {{ $slot }}
+    </div>
+</template>

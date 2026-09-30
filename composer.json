@@ -1,0 +1,82 @@
+{
+    "name": "hereafter/laraslice",
+    "description": "Future-Ready Clean Architecture & Vertical Slice Ecosystem for Enterprise, Gov & SaaS (Laravel & Flutter). Complete End-to-End SDLC from Design to Deploy via Visual UI, CLI & AI Prompts (IDE & Web MCP). Auto-generates Web, Mobile APIs, RBAC, Seeding & Audit Trails. By Hereafter Solutions.",
+    "keywords": [
+        "laravel",
+        "laravel-13",
+        "flutter",
+        "vertical-slice",
+        "clean-architecture",
+        "modular",
+        "odoo",
+        "blatui",
+        "ai",
+        "mcp",
+        "llm",
+        "code-generator"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hereafter Solutions (H. Sol)",
+            "homepage": "https://hereaftersol.com",
+            "role": "Organization / Creator"
+        },
+        {
+            "name": "Abdur Rehman",
+            "homepage": "https://github.com/AbdurRehman712",
+            "role": "Lead Architect & Creator"
+        },
+        {
+            "name": "BrandUp",
+            "homepage": "https://brandup247.com",
+            "role": "Digital Marketing Partner"
+        }
+    ],
+    "require": {
+        "php": "^8.2|^8.3|^8.4",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/routing": "^11.0|^12.0|^13.0",
+        "illuminate/console": "^11.0|^12.0|^13.0",
+        "illuminate/view": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "symfony/yaml": "^6.4|^7.0|^8.0",
+        "mallardduck/blade-lucide-icons": "^2.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaraSlice\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaraSlice\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaraSlice\\LaraSliceServiceProvider"
+            ],
+            "aliases": {
+                "SliceManager": "LaraSlice\\Facades\\SliceManager",
+                "AiEngine": "LaraSlice\\Facades\\AiEngine"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "homepage": "https://hereaftersol.com",
+    "support": {
+        "website": "https://hereaftersol.com",
+        "marketing": "https://brandup247.com",
+        "source": "https://github.com/hereaftersol/laraslice",
+        "issues": "https://github.com/hereaftersol/laraslice/issues"
+    }
+}

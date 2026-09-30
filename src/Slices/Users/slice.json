@@ -1,0 +1,35 @@
+{
+    "name": "Users",
+    "title": "User Management",
+    "version": "1.0.1",
+    "description": "Core Slice: User administration, profiles, active/suspended status, and avatar management",
+    "author": "LaraSlice Core",
+    "icon": "users",
+    "active": true,
+    "core": true,
+    "permissions": [
+        "users.view",
+        "users.create",
+        "users.edit",
+        "users.delete",
+        "users.impersonate"
+    ],
+    "fields": {
+        "cnic": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "table": "users",
+            "added_in": "1.0.1"
+        }
+    },
+    "version_history": [
+        {
+            "version": "1.0.1",
+            "migration": "2026_09_22_121659_add_cnic_to_users_table.php",
+            "description": "Added 1 column(s) to users: cnic (string)",
+            "author": "Common User via Slice Studio",
+            "date": "2026-09-22 12:16:59"
+        }
+    ]
+}

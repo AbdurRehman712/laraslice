@@ -1,0 +1,23 @@
+{
+    "name": "Settings",
+    "title": "System Settings & Mail/SMTP",
+    "version": "1.0.0",
+    "description": "Core Slice: Dynamic SMTP configuration, mail testing, and enterprise system parameters",
+    "author": "LaraSlice Core",
+    "icon": "settings",
+    "active": true,
+    "core": true,
+    "navigation": {
+        "label": "Settings & SMTP",
+        "route": "settings.smtp",
+        "icon": "settings",
+        "order": 40
+    },
+    "permissions": [
+        "settings.view",
+        "settings.edit",
+        "settings.smtp.view",
+        "settings.smtp.edit",
+        "settings.smtp.test"
+    ]
+}

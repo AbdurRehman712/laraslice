@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaraSlice — Autonomous Vertical Slice Architecture for Laravel & Flutter</title>
+    <meta name="description" content="Generate enterprise-grade Vertical Slices via Visual Studio UI, Artisan CLI, or Autonomous AI Prompts. Pure BlatUI tokens, typed DTOs, domain RBAC, and zero-lock-in.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        amber: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+                        slate: { 850: '#111827', 900: '#0f172a', 950: '#020617' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+        .gradient-glow {
+            background: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased flex flex-col selection:bg-amber-500/20 selection:text-amber-400"
+      x-data="{
+          genTab: 'cli',
+          anatomyTab: 'manifest',
+          faqOpen: null,
+          copiedCmd: false,
+          copy(text) {
+              navigator.clipboard.writeText(text);
+              this.copiedCmd = true;
+              setTimeout(() => this.copiedCmd = false, 2000);
+          }
+      }">
+
+    <!-- Ambient Gradient Mesh -->
+    <div class="fixed inset-0 pointer-events-none gradient-glow -z-10"></div>
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="#" class="flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 font-black text-base flex items-center justify-center shadow-lg shadow-amber-500/25 group-hover:scale-105 transition">
+                        LS
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-white text-base tracking-tight">LaraSlice</span>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold ml-1.5">v1.0</span>
+                    </div>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-400">
+                <a href="#generation" class="hover:text-amber-400 transition">3 Generation Engines</a>
+                <a href="#comparison" class="hover:text-amber-400 transition">Architecture</a>
+                <a href="#anatomy" class="hover:text-amber-400 transition">Slice Anatomy</a>
+                <a href="#three-layers" class="hover:text-amber-400 transition">3-Layer Model</a>
+                <a href="#faq" class="hover:text-amber-400 transition">Developer FAQ</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/hereaftersol/laraslice" target="_blank" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-bold text-xs rounded-xl transition flex items-center gap-2 shadow-xs">
+                    <svg class="size-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                </a>
+                <a href="#quickstart" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-amber-500/20 transition flex items-center gap-1.5">
+                    <span>Get Started</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-6">
+            <span>✨</span>
+            <span>Vertical Slice Architecture for Laravel 13+ & Flutter</span>
+            <span class="size-1 rounded-full bg-amber-400"></span>
+            <span class="text-slate-400">Zero Third-Party Lock-in</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.08] mb-6">
+            Stop building monoliths.<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500">
+                Scale with Vertical Slices.
+            </span>
+        </h1>
+
+        <p class="text-base sm:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed mb-10">
+            LaraSlice replaces scattered controllers, models, and migrations with cohesive, autonomous domain slices. 
+            Generate enterprise modules via <strong>Visual Studio UI</strong>, <strong>Artisan CLI</strong>, or <strong>Autonomous AI prompts</strong> — complete with typed DTO contracts, native RBAC, compliance audit trails, and Flutter exports.
+        </p>
+
+        <!-- Prerequisite Notice -->
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-6">
+            <span>⚠️ Prerequisite:</span>
+            <span class="text-slate-200">Requires an existing Laravel 11, 12, or 13 project</span>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-14">
+            <div class="flex items-center rounded-xl bg-slate-900 border border-slate-700/80 p-1.5 shadow-xl">
+                <span class="text-xs font-mono text-slate-400 px-3 select-all">composer require hereafter/laraslice && php artisan slice:install</span>
+                <button type="button" @click="copy('composer require hereafter/laraslice && php artisan slice:install')" class="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition flex items-center gap-1.5">
+                    <span x-show="!copiedCmd">📋 Copy</span>
+                    <span x-show="copiedCmd">✓ Copied!</span>
+                </button>
+            </div>
+            <a href="https://github.com/hereaftersol/laraslice" target="_blank" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs transition shadow-md flex items-center gap-2">
+                <span>View on GitHub</span>
+                <span>↗</span>
+            </a>
+        </div>
+
+        <!-- Metric Badges -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto text-left">
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                <div class="text-2xl font-black text-amber-400 mb-0.5">3 Ways</div>
+                <div class="text-xs text-slate-400 font-medium">UI, CLI, or AI Prompts</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                <div class="text-2xl font-black text-amber-400 mb-0.5">100%</div>
+                <div class="text-xs text-slate-400 font-medium">Pure BlatUI + Tailwind v4</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                <div class="text-2xl font-black text-amber-400 mb-0.5">0 Lock-In</div>
+                <div class="text-xs text-slate-400 font-medium">Runs as Pure Laravel</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+                <div class="text-2xl font-black text-amber-400 mb-0.5">1-Click</div>
+                <div class="text-xs text-slate-400 font-medium">Flutter Mobile Export</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 1: 3 WAYS TO GENERATE SLICES (UI / CLI / AI) -->
+    <section id="generation" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">Generation Superpowers</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+                Three Ways to Build. Infinite Velocity.
+            </h2>
+            <p class="text-sm sm:text-base text-slate-400">
+                Choose the workflow that fits your team. Visual drag-and-drop studio for architects, lightning CLI commands for developers, or autonomous prompt generation for AI-native teams.
+            </p>
+        </div>
+
+        <!-- 3 Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Card 1: Visual Studio UI -->
+            <div class="p-6 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/40 transition group relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="size-12 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xl font-bold">
+                        🖥️
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1.5 flex items-center gap-2">
+                            <span>Visual Studio UI</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-mono">Web GUI</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Interactive Blueprint Studio & Schema Wizard. Design multi-table aggregates, field types, validations, and parent-child entity trees with live directory previews.
+                        </p>
+                    </div>
+                    <ul class="text-xs text-slate-400 space-y-1.5 font-medium">
+                        <li class="flex items-center gap-2 text-slate-300">✓ High-density Statamic-style field grid</li>
+                        <li class="flex items-center gap-2 text-slate-300">✓ Aggregate root child entity manager</li>
+                        <li class="flex items-center gap-2 text-slate-300">✓ Real-time LaraSlice directory tree</li>
+                    </ul>
+                </div>
+                <div class="pt-6 border-t border-slate-800/80 mt-6">
+                    <span class="text-[11px] font-mono text-amber-400">Route: /laraslice/wizard</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Developer CLI -->
+            <div class="p-6 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/40 transition group relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="size-12 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xl font-bold">
+                        ⚡
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1.5 flex items-center gap-2">
+                            <span>Developer CLI</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 font-mono">Artisan</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            One artisan command generates complete vertical slice architectures in under a second — including models, DTOs, controllers, routes, views, and migrations.
+                        </p>
+                    </div>
+                    <ul class="text-xs text-slate-400 space-y-1.5 font-medium">
+                        <li class="flex items-center gap-2 text-slate-300">✓ <code>slice:make &lt;Name&gt; --workflow</code></li>
+                        <li class="flex items-center gap-2 text-slate-300">✓ <code>blueprint:apply &lt;file.yaml&gt;</code></li>
+                        <li class="flex items-center gap-2 text-slate-300">✓ <code>slice:make &lt;Name&gt; --flutter</code></li>
+                    </ul>
+                </div>
+                <div class="pt-6 border-t border-slate-800/80 mt-6">
+                    <span class="text-[11px] font-mono text-blue-400">php artisan slice:make Order</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Autonomous AI Prompts -->
+            <div class="p-6 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/40 transition group relative overflow-hidden flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="size-12 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-xl font-bold">
+                        🤖
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1.5 flex items-center gap-2">
+                            <span>Autonomous AI Engine</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-mono">AI-Native</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Natural language to production slices. LaraSlice provides Antigravity & Cursor skills that generate typed schemas directly from specs and user stories.
+                        </p>
+                    </div>
+                    <ul class="text-xs text-slate-400 space-y-1.5 font-medium">
+                        <li class="flex items-center gap-2 text-slate-300">✓ Jev System One typed decision engine</li>
+                        <li class="flex items-center gap-2 text-slate-300">✓ LaraSlice Skill prompt integration</li>
+                        <li class="flex items-center gap-2 text-slate-300">✓ Autonomous test and schema generation</li>
+                    </ul>
+                </div>
+                <div class="pt-6 border-t border-slate-800/80 mt-6">
+                    <span class="text-[11px] font-mono text-emerald-400">"Create Order slice with Stripe..."</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Terminal Simulator -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="size-3 rounded-full bg-red-500/80"></span>
+                    <span class="size-3 rounded-full bg-yellow-500/80"></span>
+                    <span class="size-3 rounded-full bg-green-500/80"></span>
+                    <span class="text-xs font-mono text-slate-400 ml-2">laraslice-terminal</span>
+                </div>
+                <!-- Interactive Tabs -->
+                <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button type="button" @click="genTab = 'cli'" :class="genTab === 'cli' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'" class="px-3 py-1 rounded-lg transition cursor-pointer">
+                        Artisan CLI
+                    </button>
+                    <button type="button" @click="genTab = 'ai'" :class="genTab === 'ai' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'" class="px-3 py-1 rounded-lg transition cursor-pointer">
+                        AI Prompt
+                    </button>
+                    <button type="button" @click="genTab = 'blueprint'" :class="genTab === 'blueprint' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'" class="px-3 py-1 rounded-lg transition cursor-pointer">
+                        Blueprint YAML
+                    </button>
+                    <button type="button" @click="genTab = 'flutter'" :class="genTab === 'flutter' ? 'bg-amber-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'" class="px-3 py-1 rounded-lg transition cursor-pointer">
+                        Flutter Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terminal Output Area -->
+            <div class="p-6 text-xs sm:text-sm font-mono overflow-x-auto min-h-[220px]">
+                <!-- Tab: CLI -->
+                <div x-show="genTab === 'cli'" class="space-y-1.5">
+                    <div class="text-slate-400">$ php artisan slice:make Order --workflow --field=order_number:string --field=total:decimal</div>
+                    <div class="text-amber-400 font-bold">⚡ Scaffolding Vertical Slice: Order...</div>
+                    <div class="text-emerald-400">✓ Created Slice Manifest: app/Slices/Orders/slice.json</div>
+                    <div class="text-emerald-400">✓ Created Contracts (DTOs): OrderFormObject, OrderListingObject, OrderFilter</div>
+                    <div class="text-emerald-400">✓ Created Model & Migration: Order.php, create_orders_table.php</div>
+                    <div class="text-emerald-400">✓ Created Data Service: OrderSliceService.php (with CRUD lifecycle hooks)</div>
+                    <div class="text-emerald-400">✓ Created Controllers & Routes: OrderWebController, OrderApiController</div>
+                    <div class="text-emerald-400">✓ Created BlatUI Views: index.blade.php, form.blade.php</div>
+                    <div class="text-emerald-400 font-bold pt-1">🎉 Slice [Order] generated successfully! Run 'php artisan migrate'.</div>
+                </div>
+
+                <!-- Tab: AI -->
+                <div x-show="genTab === 'ai'" class="space-y-1.5" style="display: none;">
+                    <div class="text-slate-400">Prompt: "Build an E-Commerce Order slice with items, status workflow, and stripe payments"</div>
+                    <div class="text-purple-400 font-bold">🤖 LaraSlice AI Copilot resolving schema...</div>
+                    <div class="text-slate-300">↳ Detected Aggregate Root: Order with child entity OrderItem (One-to-Many)</div>
+                    <div class="text-slate-300">↳ Injected State Machine: draft ➔ pending ➔ processing ➔ completed ➔ cancelled</div>
+                    <div class="text-slate-300">↳ Added AuditableSlice trait with SOC2-compliant diff logging</div>
+                    <div class="text-emerald-400 font-bold pt-1">✓ Autonomous slice compiled to app/Slices/Orders/ with 100% test coverage.</div>
+                </div>
+
+                <!-- Tab: Blueprint -->
+                <div x-show="genTab === 'blueprint'" class="space-y-1.5" style="display: none;">
+                    <div class="text-slate-400">$ php artisan blueprint:apply blueprints/ecommerce.slice.yaml</div>
+                    <div class="text-blue-400 font-bold">📖 Reading declarative blueprint: blueprints/ecommerce.slice.yaml...</div>
+                    <div class="text-slate-300">↳ Validating domain boundary [Shop] with 3 cohesive slices...</div>
+                    <div class="text-emerald-400">✓ Applied Slice [Shop/Products] (12 fields, inventory tracking)</div>
+                    <div class="text-emerald-400">✓ Applied Slice [Shop/Categories] (hierarchical nesting)</div>
+                    <div class="text-emerald-400">✓ Applied Slice [Shop/Orders] (multi-table aggregate root)</div>
+                    <div class="text-emerald-400 font-bold pt-1">✓ 3 slices synchronized with zero database drifts.</div>
+                </div>
+
+                <!-- Tab: Flutter -->
+                <div x-show="genTab === 'flutter'" class="space-y-1.5" style="display: none;">
+                    <div class="text-slate-400">$ php artisan slice:make Invoice --flutter</div>
+                    <div class="text-cyan-400 font-bold">📱 Generating Laravel Backend & Flutter Client Slice...</div>
+                    <div class="text-emerald-400">✓ Laravel Backend Slice: app/Slices/Invoices/</div>
+                    <div class="text-cyan-400">✓ Flutter Model: lib/slices/invoices/models/invoice_model.dart</div>
+                    <div class="text-cyan-400">✓ Flutter API Client: lib/slices/invoices/services/invoice_api_service.dart</div>
+                    <div class="text-cyan-400">✓ Flutter UI Screen: lib/slices/invoices/screens/invoice_list_screen.dart</div>
+                    <div class="text-emerald-400 font-bold pt-1">🎉 Full-stack cross-platform slice ready!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: ARCHITECTURAL COMPARISON (TRADITIONAL VS LARASLICE) -->
+    <section id="comparison" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">Architectural Paradigm</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+                Monolith Hell vs. Vertical Slice Clarity
+            </h2>
+            <p class="text-sm sm:text-base text-slate-400">
+                In traditional layered Laravel, a single feature scatters code across 10 folders. LaraSlice groups all cohesive business logic into one autonomous bounded context.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <!-- Left: Traditional Layered -->
+            <div class="p-6 rounded-3xl bg-red-950/20 border border-red-900/40 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-red-900/40">
+                    <span class="text-sm font-bold text-red-400">❌ Traditional Layered Laravel (Scattered)</span>
+                    <span class="text-[11px] font-mono text-red-400/80">Coupled & Fragile</span>
+                </div>
+                <div class="text-xs font-mono space-y-1 text-slate-400 leading-relaxed">
+                    <div>app/Http/Controllers/OrderController.php</div>
+                    <div>app/Http/Requests/StoreOrderRequest.php</div>
+                    <div>app/Models/Order.php</div>
+                    <div>app/Models/OrderItem.php</div>
+                    <div>app/Services/OrderService.php</div>
+                    <div>database/migrations/2026_create_orders_table.php</div>
+                    <div>resources/views/orders/index.blade.php</div>
+                    <div>resources/views/orders/create.blade.php</div>
+                    <div>routes/web.php (contains 100+ random routes)</div>
+                </div>
+                <p class="text-xs text-red-300/80 pt-2 border-t border-red-900/30">
+                    ⚠️ Changing one field requires editing 8 different folders. Deleting a feature leaves orphaned migrations, routes, and views behind.
+                </p>
+            </div>
+
+            <!-- Right: LaraSlice Vertical Slice -->
+            <div class="p-6 rounded-3xl bg-amber-950/20 border border-amber-500/40 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-amber-500/40">
+                    <span class="text-sm font-bold text-amber-400">✅ LaraSlice Vertical Slice (Bounded Context)</span>
+                    <span class="text-[11px] font-mono text-emerald-400 font-bold">100% Encapsulated</span>
+                </div>
+                <div class="text-xs font-mono space-y-1 text-slate-300 leading-relaxed">
+                    <div class="text-amber-400 font-bold">app/Slices/Orders/</div>
+                    <div class="pl-4">├── slice.json <span class="text-slate-500">(Declarative Manifest)</span></div>
+                    <div class="pl-4">├── Contracts/ <span class="text-slate-500">(Typed DTOs - Form, Listing, Filter)</span></div>
+                    <div class="pl-4">├── Models/ <span class="text-slate-500">(Order.php & OrderItem.php)</span></div>
+                    <div class="pl-4">├── Services/ <span class="text-slate-500">(OrderSliceService.php lifecycle hooks)</span></div>
+                    <div class="pl-4">├── Http/ <span class="text-slate-500">(OrderWebController & OrderApiController)</span></div>
+                    <div class="pl-4">├── Resources/views/ <span class="text-slate-500">(Pure BlatUI Blade templates)</span></div>
+                    <div class="pl-4">└── Routes/ <span class="text-slate-500">(web.php & api.php self-registered)</span></div>
+                </div>
+                <p class="text-xs text-emerald-300/80 pt-2 border-t border-amber-500/30">
+                    💎 Everything about the feature lives in one directory. Slices can be tested in total isolation, published as packages, or safely deleted in 1 click.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: SLICE ANATOMY EXPLORER -->
+    <section id="anatomy" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">Code Standard</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+                Anatomy of a LaraSlice
+            </h2>
+            <p class="text-sm sm:text-base text-slate-400">
+                Explore the clean, typed PHP and Blade code generated by the engine. Zero magic, zero bloat — just pure, scalable architectural standards.
+            </p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+            <!-- File Tabs -->
+            <div class="flex items-center gap-1 bg-slate-950 px-4 py-3 border-b border-slate-800 overflow-x-auto text-xs font-mono">
+                <button type="button" @click="anatomyTab = 'manifest'" :class="anatomyTab === 'manifest' ? 'bg-slate-800 text-amber-400 font-bold border-b-2 border-amber-400' : 'text-slate-400 hover:text-white'" class="px-4 py-2 rounded-t-lg transition">
+                    slice.json
+                </button>
+                <button type="button" @click="anatomyTab = 'dto'" :class="anatomyTab === 'dto' ? 'bg-slate-800 text-amber-400 font-bold border-b-2 border-amber-400' : 'text-slate-400 hover:text-white'" class="px-4 py-2 rounded-t-lg transition">
+                    Contracts/OrderFormObject.php
+                </button>
+                <button type="button" @click="anatomyTab = 'service'" :class="anatomyTab === 'service' ? 'bg-slate-800 text-amber-400 font-bold border-b-2 border-amber-400' : 'text-slate-400 hover:text-white'" class="px-4 py-2 rounded-t-lg transition">
+                    Services/OrderSliceService.php
+                </button>
+                <button type="button" @click="anatomyTab = 'blade'" :class="anatomyTab === 'blade' ? 'bg-slate-800 text-amber-400 font-bold border-b-2 border-amber-400' : 'text-slate-400 hover:text-white'" class="px-4 py-2 rounded-t-lg transition">
+                    Resources/views/index.blade.php
+                </button>
+            </div>
+
+            <!-- Code Blocks -->
+            <div class="p-6 text-xs sm:text-sm font-mono overflow-x-auto bg-slate-900/90 leading-relaxed">
+                <!-- manifest -->
+                <div x-show="anatomyTab === 'manifest'">
+<pre class="text-slate-300"><span class="text-slate-500">// app/Slices/Orders/slice.json</span>
+{
+    <span class="text-amber-400">"name"</span>: <span class="text-emerald-400">"Orders"</span>,
+    <span class="text-amber-400">"domain"</span>: <span class="text-emerald-400">"Shop"</span>,
+    <span class="text-amber-400">"version"</span>: <span class="text-emerald-400">"1.0.0"</span>,
+    <span class="text-amber-400">"root_table"</span>: <span class="text-emerald-400">"orders"</span>,
+    <span class="text-amber-400">"aggregate_children"</span>: [<span class="text-emerald-400">"order_items"</span>, <span class="text-emerald-400">"order_shipments"</span>],
+    <span class="text-amber-400">"capabilities"</span>: [<span class="text-emerald-400">"view"</span>, <span class="text-emerald-400">"create"</span>, <span class="text-emerald-400">"edit"</span>, <span class="text-emerald-400">"delete"</span>, <span class="text-emerald-400">"export"</span>],
+    <span class="text-amber-400">"auditable"</span>: <span class="text-blue-400">true</span>,
+    <span class="text-amber-400">"workflow"</span>: {
+        <span class="text-amber-400">"states"</span>: [<span class="text-emerald-400">"draft"</span>, <span class="text-emerald-400">"pending"</span>, <span class="text-emerald-400">"completed"</span>, <span class="text-emerald-400">"cancelled"</span>]
+    }
+}</pre>
+                </div>
+
+                <!-- DTO -->
+                <div x-show="anatomyTab === 'dto'" style="display: none;">
+<pre class="text-slate-300"><span class="text-slate-500">// app/Slices/Orders/Contracts/OrderFormObject.php</span>
+<span class="text-purple-400">namespace</span> App\Slices\Orders\Contracts;
+
+<span class="text-purple-400">readonly class</span> <span class="text-amber-400">OrderFormObject</span>
+{
+    <span class="text-purple-400">public function</span> <span class="text-blue-400">__construct</span>(
+        <span class="text-purple-400">public string</span> <span class="text-slate-200">$orderNumber</span>,
+        <span class="text-purple-400">public int</span> <span class="text-slate-200">$customerId</span>,
+        <span class="text-purple-400">public float</span> <span class="text-slate-200">$totalAmount</span>,
+        <span class="text-purple-400">public string</span> <span class="text-slate-200">$status</span> = <span class="text-emerald-400">'draft'</span>,
+        <span class="text-purple-400">public array</span> <span class="text-slate-200">$items</span> = [],
+    ) {}
+
+    <span class="text-purple-400">public static function</span> <span class="text-blue-400">fromRequest</span>(Request <span class="text-slate-200">$request</span>): <span class="text-amber-400">self</span>
+    {
+        <span class="text-purple-400">return new self</span>(
+            orderNumber: <span class="text-slate-200">$request</span>->validated(<span class="text-emerald-400">'order_number'</span>),
+            customerId: <span class="text-slate-200">$request</span>->validated(<span class="text-emerald-400">'customer_id'</span>),
+            totalAmount: (float) <span class="text-slate-200">$request</span>->validated(<span class="text-emerald-400">'total_amount'</span>),
+            status: <span class="text-slate-200">$request</span>->validated(<span class="text-emerald-400">'status'</span>, <span class="text-emerald-400">'draft'</span>),
+            items: <span class="text-slate-200">$request</span>->validated(<span class="text-emerald-400">'items'</span>, []),
+        );
+    }
+}</pre>
+                </div>
+
+                <!-- Service -->
+                <div x-show="anatomyTab === 'service'" style="display: none;">
+<pre class="text-slate-300"><span class="text-slate-500">// app/Slices/Orders/Services/OrderSliceService.php</span>
+<span class="text-purple-400">namespace</span> App\Slices\Orders\Services;
+
+<span class="text-purple-400">use</span> LaraSlice\Core\Base\BaseSliceService;
+<span class="text-purple-400">use</span> LaraSlice\Core\Audit\Traits\AuditableSlice;
+
+<span class="text-purple-400">class</span> <span class="text-amber-400">OrderSliceService</span> <span class="text-purple-400">extends</span> <span class="text-blue-400">BaseSliceService</span>
+{
+    <span class="text-purple-400">use</span> <span class="text-blue-400">AuditableSlice</span>;
+
+    <span class="text-purple-400">public function</span> <span class="text-blue-400">afterCreated</span>(Model <span class="text-slate-200">$order</span>, array <span class="text-slate-200">$data</span>): <span class="text-purple-400">void</span>
+    {
+        <span class="text-slate-500">// Automated audit trail, notification dispatch, and child items sync</span>
+        <span class="text-slate-200">$this</span>->syncChildEntities(<span class="text-slate-200">$order</span>, <span class="text-emerald-400">'items'</span>, <span class="text-slate-200">$data</span>[<span class="text-emerald-400">'items'</span>] ?? []);
+        <span class="text-slate-200">$this</span>->logAudit(<span class="text-emerald-400">'order.created'</span>, <span class="text-slate-200">$order</span>);
+    }
+}</pre>
+                </div>
+
+                <!-- Blade -->
+                <div x-show="anatomyTab === 'blade'" style="display: none;">
+<pre class="text-slate-300"><span class="text-slate-500">{{-- app/Slices/Orders/Resources/views/index.blade.php --}}</span>
+@extends(<span class="text-emerald-400">'layouts.app'</span>)
+
+@section(<span class="text-emerald-400">'content'</span>)
+&lt;<span class="text-purple-400">div</span> class=<span class="text-emerald-400">"space-y-6"</span>&gt;
+    &lt;<span class="text-purple-400">x-ui.table</span> :items=<span class="text-emerald-400">"$orders"</span>&gt;
+        &lt;<span class="text-purple-400">x-ui.table-column</span> label=<span class="text-emerald-400">"Order #"</span> field=<span class="text-emerald-400">"order_number"</span> /&gt;
+        &lt;<span class="text-purple-400">x-ui.table-column</span> label=<span class="text-emerald-400">"Customer"</span> field=<span class="text-emerald-400">"customer.name"</span> /&gt;
+        &lt;<span class="text-purple-400">x-ui.table-column</span> label=<span class="text-emerald-400">"Status"</span>&gt;
+            &lt;<span class="text-purple-400">x-ui.badge</span> :variant=<span class="text-emerald-400">"$item->status === 'completed' ? 'success' : 'outline'"</span>&gt;
+                @{{ $item-&gt;status }}
+            &lt;/<span class="text-purple-400">x-ui.badge</span>&gt;
+        &lt;/<span class="text-purple-400">x-ui.table-column</span>&gt;
+        &lt;<span class="text-purple-400">x-ui.table-column</span> label=<span class="text-emerald-400">"Total"</span> field=<span class="text-emerald-400">"total_amount"</span> /&gt;
+    &lt;/<span class="text-purple-400">x-ui.table</span>&gt;
+&lt;/<span class="text-purple-400">div</span>&gt;
+@endsection</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: THREE-LAYER PACKAGING MODEL (ADR-001) -->
+    <section id="three-layers" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">Architectural Foundation</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+                The 3-Layer Packaging Model (ADR-001)
+            </h2>
+            <p class="text-sm sm:text-base text-slate-400">
+                How LaraSlice guarantees zero broken upgrades. Customize core slices in your project without fighting Composer updates.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+                <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800 text-amber-400 font-bold">Layer 1: Engine</span>
+                <h3 class="text-base font-bold text-white">vendor/hereafter/laraslice</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    The core runtime engine: base classes, audit logging, blueprint parsers, discovery manager, and CLI commands. Updated cleanly via Composer without touching project business logic.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-slate-900 border border-amber-500/40 space-y-4 shadow-lg shadow-amber-500/5">
+                <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold">Layer 2: Starter Slices</span>
+                <h3 class="text-base font-bold text-white">app/Slices/ (Project Space)</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Users, Roles, Auth, and Settings ship in <code>app/Slices/</code>. When you add CNIC, phone, or custom relationships, you commit them directly to your Git repository. Safe from Composer overwrites forever.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+                <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800 text-blue-400 font-bold">Layer 3: Community Packages</span>
+                <h3 class="text-base font-bold text-white">Packaged Bounded Contexts</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Reusable vertical slices (Shop, Helpdesk, Billing). Customized cleanly via <code>php artisan slice:publish</code> or decoupled DTO event listeners.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: DEVELOPER FAQ ACCORDION -->
+    <section id="faq" class="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto border-t border-slate-800/80">
+        <div class="text-center mb-16">
+            <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">Team Guidance</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+                Developer Guide & Architecture FAQ
+            </h2>
+            <p class="text-sm sm:text-base text-slate-400">
+                Answers to the most critical architectural questions for your engineering team.
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- FAQ 1 -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <button type="button" @click="faqOpen = (faqOpen === 1 ? null : 1)" class="w-full px-6 py-4 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-amber-400 transition cursor-pointer">
+                    <span>1. When I customize a core slice (e.g. adding CNIC to Users), where does it live?</span>
+                    <span class="font-mono text-base" x-text="faqOpen === 1 ? '−' : '+'">+</span>
+                </button>
+                <div x-show="faqOpen === 1" class="px-6 pb-5 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-4" style="display: none;">
+                    It lives in <strong>app/Slices/Users/</strong> in your project space. It is tracked by your application's Git repository. Running <code>composer update</code> will update the core engine in <code>vendor/hereafter/laraslice</code> without ever touching or wiping your custom fields, migrations, or DTO contracts.
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <button type="button" @click="faqOpen = (faqOpen === 2 ? null : 2)" class="w-full px-6 py-4 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-amber-400 transition cursor-pointer">
+                    <span>2. How does LaraSlice compare to October CMS plugin model?</span>
+                    <span class="font-mono text-base" x-text="faqOpen === 2 ? '−' : '+'">+</span>
+                </button>
+                <div x-show="faqOpen === 2" class="px-6 pb-5 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-4" style="display: none;">
+                    October CMS relies heavily on dynamic runtime monkey-patching (<code>UserModel::extend()</code>), which can lead to brittle runtime conflicts and difficult debugging. LaraSlice uses <strong>Domain-Driven Design (DDD) Vertical Slices</strong>: slices communicate strictly via typed DTO contracts and domain events. If you need full ownership of a vendor slice, you publish it via <code>php artisan slice:publish Acme/Shop</code>.
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <button type="button" @click="faqOpen = (faqOpen === 3 ? null : 3)" class="w-full px-6 py-4 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-amber-400 transition cursor-pointer">
+                    <span>3. Can slices be generated by AI agents (like Antigravity or Cursor)?</span>
+                    <span class="font-mono text-base" x-text="faqOpen === 3 ? '−' : '+'">+</span>
+                </button>
+                <div x-show="faqOpen === 3" class="px-6 pb-5 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-4" style="display: none;">
+                    Yes! LaraSlice ships with specialized skills (<code>skills/laraslice/SKILL.md</code>) and Jev System One integration. You can give an AI agent a natural language user story or specification, and it will autonomously run <code>slice:make</code>, configure parent-child multi-table schemas, and produce valid BlatUI Blade templates and Flutter code.
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <button type="button" @click="faqOpen = (faqOpen === 4 ? null : 4)" class="w-full px-6 py-4 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-amber-400 transition cursor-pointer">
+                    <span>4. What happens if I want to remove LaraSlice from my project later?</span>
+                    <span class="font-mono text-base" x-text="faqOpen === 4 ? '−' : '+'">+</span>
+                </button>
+                <div x-show="faqOpen === 4" class="px-6 pb-5 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-4" style="display: none;">
+                    <strong>Zero lock-in.</strong> Every vertical slice is pure Laravel code (Eloquent models, standard Controllers, standard Blade views, standard migrations). If you ever decide to remove LaraSlice, you can register your slices in standard Laravel service providers or move them to <code>app/Http</code> and your application will continue running with zero refactoring.
+                </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <button type="button" @click="faqOpen = (faqOpen === 5 ? null : 5)" class="w-full px-6 py-4 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-amber-400 transition cursor-pointer">
+                    <span>5. How do I customize core slices in my project or contribute upstream?</span>
+                    <span class="font-mono text-base" x-text="faqOpen === 5 ? '−' : '+'">+</span>
+                </button>
+                <div x-show="faqOpen === 5" class="px-6 pb-5 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-4 space-y-3" style="display: none;">
+                    <p>
+                        <strong>Customizing in Your Project:</strong> LaraSlice's discovery system is designed so that any slice in <code>app/Slices/</code> automatically overrides the core slice of the same name. Run:
+                    </p>
+                    <pre class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 font-mono text-xs">php artisan slice:publish Users</pre>
+                    <p>
+                        *(or <code>php artisan slice:publish --all</code>)*. This copies the core slice into <code>app/Slices/Users</code>, allowing you to edit models, DTOs, controllers, and views directly in your Git repo without touching <code>vendor/</code>.
+                    </p>
+                    <p>
+                        <strong>Open Source Contributions:</strong> Fork <a href="https://github.com/hereaftersol/laraslice" target="_blank" class="text-amber-400 underline font-semibold">github.com/hereaftersol/laraslice</a>, edit files in <code>src/Slices/{SliceName}</code>, run <code>./vendor/bin/phpunit</code>, and open a Pull Request.
+                    </p>
+                    <p>
+                        <strong>Local Package Development:</strong> In a test Laravel project, add a path repository in <code>composer.json</code> with <code>"type": "path", "url": "../LaraSlice", "options": { "symlink": true }</code> to test framework changes live in real time.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: ECOSYSTEM & PARTNERS -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+            <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest mb-2">Our Purpose & Collective</div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+                Engineered with Purpose. Scaled with Impact.
+            </h2>
+            <p class="text-sm text-slate-400">
+                LaraSlice is built upon a visionary foundation of engineering excellence, compassionate innovation, and strategic digital reach.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+            <!-- Hereafter Solutions -->
+            <div class="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 shadow-xl space-y-5 flex flex-col justify-between hover:border-amber-500/40 transition">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            Creator & Lead Architect
+                        </span>
+                        <a href="https://hereaftersol.com" target="_blank" class="text-xs font-mono text-slate-400 hover:text-amber-400 transition">
+                            hereaftersol.com &rarr;
+                        </a>
+                    </div>
+                    <div class="text-2xl font-black text-white">Hereafter Solutions (H. Sol)</div>
+                    <p class="text-sm font-semibold text-amber-400 italic">
+                        "Sowing Seeds of Innovation, Harvesting Compassion: Bridging Today’s Technology with Tomorrow’s Generosity."
+                    </p>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Inspired by the prophetic 1/3 Hadith model (Sahih Muslim 7473), Hereafter Solutions reinvests one-third of its yield into open-source developer tooling like LaraSlice, and one-third to Sadqah-e-Jariyah as a Service (SJaaS) to empower startups worldwide.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                    <span class="text-slate-400">Philosophy & Social Collective</span>
+                    <a href="https://hereaftersol.com" target="_blank" class="font-bold text-white hover:text-amber-400 transition">Visit H. Sol &rarr;</a>
+                </div>
+            </div>
+
+            <!-- BrandUp -->
+            <div class="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 shadow-xl space-y-5 flex flex-col justify-between hover:border-amber-500/40 transition">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            Official Digital Marketing Partner
+                        </span>
+                        <a href="https://brandup247.com" target="_blank" class="text-xs font-mono text-slate-400 hover:text-amber-400 transition">
+                            brandup247.com &rarr;
+                        </a>
+                    </div>
+                    <div class="text-2xl font-black text-white">BrandUp</div>
+                    <p class="text-sm font-semibold text-amber-400 italic">
+                        Accelerating High-Impact Brand Growth, Performance Marketing & Creative Reach.
+                    </p>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        BrandUp drives strategic market adoption, audience acquisition, and creative digital storytelling for modern tech ecosystems and enterprises across the globe.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                    <span class="text-slate-400">Growth Strategy & Marketing</span>
+                    <a href="https://brandup247.com" target="_blank" class="font-bold text-white hover:text-amber-400 transition">Visit BrandUp &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 font-black flex items-center justify-center text-sm font-bold">
+                    LS
+                </div>
+                <div class="text-xs text-slate-400">
+                    <span class="text-white font-bold">LaraSlice Framework</span> — Engineered by <a href="https://hereaftersol.com" target="_blank" class="text-amber-400 hover:underline">Hereafter Solutions (H. Sol)</a> • Marketing by <a href="https://brandup247.com" target="_blank" class="text-amber-400 hover:underline">BrandUp</a> • Created by <a href="https://github.com/AbdurRehman712" target="_blank" class="text-white hover:underline">Abdur Rehman</a>.
+                </div>
+            </div>
+            <div class="flex items-center gap-6 text-xs text-slate-400 font-medium">
+                <a href="https://github.com/hereaftersol/laraslice" target="_blank" class="hover:text-amber-400 transition">GitHub Repo</a>
+                <a href="#generation" class="hover:text-amber-400 transition">Generation Engines</a>
+                <a href="#three-layers" class="hover:text-amber-400 transition">3-Layer Model</a>
+                <a href="#faq" class="hover:text-amber-400 transition">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
